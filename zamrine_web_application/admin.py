@@ -4,8 +4,6 @@ from .model.product import Product, ProductImages, ProductSizes
 from .model.review import Reviews
 from .model.customer import Customer
 
-# admin.site.register(Person)
-
 class ZamrineAdminSite(AdminSite):
     site_header = "Zamrine Administration"
     site_title = "Zamrine Administration"

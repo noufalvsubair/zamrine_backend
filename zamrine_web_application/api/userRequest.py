@@ -1,7 +1,8 @@
 from django.http import HttpResponse, JsonResponse
-from ..model.customer import Customer, UserForm, CustomerForm
+from ..model.customer import UserForm, CustomerForm
 from django.views.decorators.csrf import csrf_exempt
 import json
+from ..serializers import UserSerializer
 
 @csrf_exempt
 def register(request):
@@ -13,7 +14,8 @@ def register(request):
             customer = customerForm.save(commit=False)
             customer.user = user
             customerForm.save()
-            response = JsonResponse(data={'status': 'success', 'message':'user has registered'})
+            serializer = UserSerializer(user)
+            response = JsonResponse(serializer.data, safe=False)
             response.status_code = 200
             return response
         else:

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .model.product import Product
 from .model.review import Reviews
+from django.contrib.auth.models import User
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     images = serializers.StringRelatedField(many=True)
@@ -15,3 +16,14 @@ class ReviewSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Reviews
         fields = ['id', 'created_at', 'title', 'image_url', 'message', 'name', 'rating']
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    mobile = serializers.CharField(source='customer.mobile')
+    auth_token = serializers.CharField(source='customer.auth_token')
+    image_url = serializers.CharField(source='customer.image_url')
+    id = serializers.IntegerField(source='customer.id')
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'mobile', 
+            'auth_token', 'image_url']
