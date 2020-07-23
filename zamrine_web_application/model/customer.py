@@ -49,10 +49,9 @@ class UserForm(UserCreationForm):
         return password2
 
 class CustomerForm(forms.ModelForm):
-    auth_token = forms.CharField(label='auth_token')
     mobile = forms.CharField(label='mobile')
     image_url = forms.CharField(label='image_url')
 
     class Meta:
         model = Customer
-        fields = ['auth_token', 'mobile', 'image_url']
+        fields = ['mobile', 'image_url']
