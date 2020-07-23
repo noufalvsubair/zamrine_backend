@@ -6,7 +6,7 @@ from .api.userRequest import register, login
 
 urlpatterns = [
     url(r'^product.json', products),
-    url(r'^reviews.json', reviews),
-    url(r'^register.json', register),
-    url(r'^login.json', login),
+    url(r'^product/reviews.json', reviews),
+    url(r'^user/register.json', register),
+    url(r'^user/login.json', login),
 ]

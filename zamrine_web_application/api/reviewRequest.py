@@ -1,6 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from ..serializers import ReviewSerializer
 from ..model.review import Reviews
+from ..model.product import Product
 
 def reviews(request):
     if request.method == 'GET':
