@@ -44,8 +44,8 @@ def reviews(request):
                 response.status_code = 201
 
             else :
-                response = JsonResponse(data={'status': 'success', 
-                    'message':'Please provide valid product ID.'})
+                response = JsonResponse(data={'status': 'fail', 
+                    'message':'Product does not exist'})
                 response.status_code = 403
 
         else:

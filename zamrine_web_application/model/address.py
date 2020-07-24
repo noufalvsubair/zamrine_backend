@@ -4,8 +4,8 @@ from django import forms
 
 class Address(models.Model):
     ADDRESS_TYPE = (
-        (0, 'Home(7 am - 9 pm delivery)'),
-        (1, 'Office/Commercial(10 am - 6 pm delivery)'),
+        ('H', 'Home(7 am - 9 pm delivery)'),
+        ('O', 'Office/Commercial(10 am - 6 pm delivery)'),
     )
 
     id = models.AutoField(primary_key=True)
