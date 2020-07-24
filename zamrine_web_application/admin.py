@@ -4,6 +4,7 @@ from .model.product import Product, ProductImages, ProductSizes
 from .model.review import Reviews
 from .model.customer import Customer
 from .model.cart import Cart
+from .model.address import Address
 
 class ZamrineAdminSite(AdminSite):
     site_header = "Zamrine Administration"
@@ -64,5 +65,10 @@ class CartAdmin(admin.ModelAdmin):
 
     def added_at(self, obj):
         return obj.created_at
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ('name', 'mobile', 'house_name', 'street_name', 'landmark',
+        'city', 'pincode', 'state', 'country',)
 
  
