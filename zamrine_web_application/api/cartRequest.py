@@ -57,7 +57,7 @@ def cart(request):
                 response.status_code = 201
             else:
              response = JsonResponse(data={'status': 'fail', 
-                    'message':'Please provide a valid user & product'})
+                    'message':'Product does not exist'})
             response.status_code = 403   
 
         else:
@@ -82,7 +82,7 @@ def cart(request):
                 response = JsonResponse(response, safe=False)
             else:
                 response = JsonResponse(data={'status': 'fail', 
-                    'message':'Please provide a valid user'})
+                    'message':'Customer does not exist'})
                 response.status_code = 403   
         else:
             response = JsonResponse(data={'status': 'fail', 
@@ -113,12 +113,36 @@ def updateCart(request):
                     response.status_code = 304
             else:
                 response = JsonResponse(data={'status': 'fail', 
-                    'message':'Please provide a valid cart ID'})
+                    'message':'Cart Item does not exist'})
                 response.status_code = 403
-
         else:
             response = JsonResponse(data={'status': 'fail', 
                     'message':'Cart ID & Quantity was mandatory'})
             response.status_code = 403
 
+        return response
+
+@csrf_exempt
+def removeCart(request):
+    if request.method == 'POST':
+        response = {}
+        requestBody = json.loads(request.body)
+        cartID = requestBody.get('id')
+        print(cartID)
+        if cartID is not None:
+            cartItem = Cart.objects.filter(id = cartID).first()
+            if cartItem is not None:
+                cartItem.delete()
+                response = JsonResponse(data={'status': 'success', 
+                    'message':'Cart Item was removed'})
+                response.status_code = 403
+            else:
+                response = JsonResponse(data={'status': 'fail', 
+                    'message':'Cart Item does not exist'})
+                response.status_code = 403
+        else:
+            response = JsonResponse(data={'status': 'fail', 
+                    'message':'Cart ID was mandatory'})
+            response.status_code = 403
+    
         return response

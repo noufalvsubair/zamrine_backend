@@ -3,7 +3,7 @@ from django.conf.urls import url
 from .api.productRequest import products
 from .api.reviewRequest import reviews
 from .api.userRequest import register, login
-from .api.cartRequest import cart, updateCart
+from .api.cartRequest import cart, updateCart, removeCart
 
 urlpatterns = [
     url(r'^user/register.json', register),
@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^product/reviews.json', reviews),
     url(r'^product/cart.json', cart),
     url(r'^product/update_cart.json', updateCart),
+    url(r'^product/remove_cart.json', removeCart),
 ]
