@@ -5,7 +5,7 @@ from ..model.customer import Customer
 import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
-from ..serializers import ProductSerializer
+from .productRequest import ProductSerializer
 
 class CartSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only = True)

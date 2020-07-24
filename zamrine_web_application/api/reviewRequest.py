@@ -1,9 +1,14 @@
 from django.http import JsonResponse
-from ..serializers import ReviewSerializer
 from ..model.review import Reviews, ReviewForm
 from ..model.product import Product
 import json
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import serializers
+
+class ReviewSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Reviews
+        fields = ['id', 'created_at', 'title', 'image_url', 'message', 'name', 'rating']
 
 @csrf_exempt
 def reviews(request):

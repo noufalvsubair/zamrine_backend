@@ -2,9 +2,21 @@ from django.http import JsonResponse
 from ..model.customer import UserForm, CustomerForm
 from django.views.decorators.csrf import csrf_exempt
 import json
-from ..serializers import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+from rest_framework import serializers
+from django.contrib.auth.models import User
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    mobile = serializers.CharField(source='customer.mobile')
+    auth_token = serializers.CharField(source='customer.auth_token')
+    image_url = serializers.CharField(source='customer.image_url')
+    id = serializers.IntegerField(source='customer.id')
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'mobile', 
+            'auth_token', 'image_url']
 
 @csrf_exempt
 def register(request):
