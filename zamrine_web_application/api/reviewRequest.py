@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from ..serializers import ReviewSerializer
 from ..model.review import Reviews, ReviewForm
 from ..model.product import Product
@@ -26,7 +26,7 @@ def reviews(request):
         productID = requestBody.get('id')
         response = {}
         if productID is not None :
-            product = Product.objects.get(id = productID)
+            product = Product.objects.filter(id = productID).first()
             
             if product is not None :
                 reviewForm = ReviewForm(requestBody)

@@ -3,6 +3,7 @@ from django.contrib.admin import AdminSite
 from .model.product import Product, ProductImages, ProductSizes
 from .model.review import Reviews
 from .model.customer import Customer
+from .model.cart import Cart
 
 class ZamrineAdminSite(AdminSite):
     site_header = "Zamrine Administration"
@@ -50,6 +51,10 @@ class CustomerAdmin(admin.ModelAdmin):
 
     def email(self, obj):
         return obj.user.email
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ('size', 'quantity')
 
 
 
