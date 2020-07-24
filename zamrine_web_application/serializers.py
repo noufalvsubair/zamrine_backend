@@ -3,7 +3,7 @@ from .model.product import Product
 from .model.review import Reviews
 from django.contrib.auth.models import User
 
-class ProductSerializer(serializers.HyperlinkedModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
     sizes = serializers.StringRelatedField(many=True)
     
