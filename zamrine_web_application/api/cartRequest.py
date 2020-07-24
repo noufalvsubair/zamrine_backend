@@ -86,7 +86,7 @@ def cart(request):
                 response.status_code = 403   
         else:
             response = JsonResponse(data={'status': 'fail', 
-                    'message':'Product ID & User ID was mandatory'})
+                    'message':'User ID was mandatory'})
             response.status_code = 403
         
         return response
@@ -126,16 +126,14 @@ def updateCart(request):
 def removeCart(request):
     if request.method == 'POST':
         response = {}
-        requestBody = json.loads(request.body)
-        cartID = requestBody.get('id')
-        print(cartID)
+        cartID = request.POST.get('id')
         if cartID is not None:
             cartItem = Cart.objects.filter(id = cartID).first()
             if cartItem is not None:
                 cartItem.delete()
                 response = JsonResponse(data={'status': 'success', 
                     'message':'Cart Item was removed'})
-                response.status_code = 403
+                response.status_code = 200
             else:
                 response = JsonResponse(data={'status': 'fail', 
                     'message':'Cart Item does not exist'})
