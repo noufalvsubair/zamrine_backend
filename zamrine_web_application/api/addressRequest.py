@@ -5,6 +5,12 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['name', 'mobile', 'address_type', 'city', 'country', 'house_name', 
+            'landmark', 'pincode', 'state', 'street_name']
+
 @csrf_exempt
 def address(request):
     if request.method == 'POST' :
@@ -32,4 +38,25 @@ def address(request):
                 'message':'User ID was mandatory.'})
             response.status_code = 404
 
+        return response
+
+    if request.method == 'GET':
+        response = {}
+        requestBody = json.loads(request.body)
+        userID = requestBody.get('id')
+        if userID is not None:
+            customer = Customer.objects.filter(id = userID).first()
+            if customer is not None:
+                addresses = Address.objects.filter(customer = customer)
+                serializers = AddressSerializer(addresses, many=True)
+                response = JsonResponse(serializers.data, safe=False)
+            else:
+                response = JsonResponse(data={'status': 'fail', 
+                    'message':'Customer does not exist'})
+                response.status_code = 403
+        else:
+            response = JsonResponse(data={'status': 'error', 
+                'message':'User ID was mandatory.'})
+            response.status_code = 404
+        
         return response
