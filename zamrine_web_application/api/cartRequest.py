@@ -12,7 +12,28 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ['size', 'quantity', 'product']
+        fields = ['id', 'size', 'quantity', 'product']
+
+def calculateOverAllPrice(cartItems):
+    overAllCost = 0
+    for cart in cartItems:
+        productPrice = cart.product.current_price
+        productQuantity = cart.quantity
+        overAllCost = overAllCost + (productPrice * productQuantity)
+        
+    return overAllCost
+
+def calculateOverAllDiscount(cartItems):
+    overAllDiscount = 0
+    for cart in cartItems:
+        productPrice = cart.product.current_price
+        productPreviousPrice = cart.product.previous_price
+        productQuantity = cart.quantity
+        if (productPreviousPrice > 0):
+            overAllDiscount = overAllDiscount + ((productPreviousPrice 
+                - productPrice) * productQuantity)
+        
+    return overAllDiscount
 
 @csrf_exempt
 def cart(request):    
@@ -48,19 +69,56 @@ def cart(request):
     
     if request.method == 'GET':
         userID = request.GET.get('id')
+        response = {}
         if userID is not None:
             customer = Customer.objects.filter(id = userID).first()
             if customer is not None:
                 cartItems = Cart.objects.filter(customer = customer)
                 serializers = CartSerializer(cartItems, many=True)
-                response = JsonResponse(serializers.data, safe=False)
+                response['total_price'] = calculateOverAllPrice(cartItems = cartItems)
+                response['total_discount'] = calculateOverAllDiscount(cartItems = cartItems)
+                response['delivery_charge'] = 0
+                response['cart_items'] = serializers.data
+                response = JsonResponse(response, safe=False)
             else:
-             response = JsonResponse(data={'status': 'fail', 
+                response = JsonResponse(data={'status': 'fail', 
                     'message':'Please provide a valid user'})
-            response.status_code = 403   
+                response.status_code = 403   
         else:
             response = JsonResponse(data={'status': 'fail', 
                     'message':'Product ID & User ID was mandatory'})
             response.status_code = 403
         
+        return response
+
+@csrf_exempt
+def updateCart(request):
+    if request.method == 'POST':
+        response = {}
+        requestBody = json.loads(request.body)
+        cartID = requestBody.get('id')
+        quantity = requestBody.get('quantity')
+        if cartID is not None and quantity is not None:
+            cartitem = Cart.objects.filter(id = cartID).first()
+            if cartitem is not None:
+                if (cartitem.quantity < 3 and quantity < 3):
+                    cartitem.quantity = quantity
+                    cartitem.save(update_fields=['quantity'])
+                    response = JsonResponse(data={'status': 'success', 
+                        'message':'Cart item is updated'})
+                    response.status_code = 200 
+                else :
+                    response = JsonResponse(data={'status': 'fail', 
+                        'message':'Maxium cart was item quantity exceeded'})
+                    response.status_code = 304
+            else:
+                response = JsonResponse(data={'status': 'fail', 
+                    'message':'Please provide a valid cart ID'})
+                response.status_code = 403
+
+        else:
+            response = JsonResponse(data={'status': 'fail', 
+                    'message':'Cart ID & Quantity was mandatory'})
+            response.status_code = 403
+
         return response
