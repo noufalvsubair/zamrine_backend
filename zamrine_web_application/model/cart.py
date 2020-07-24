@@ -13,9 +13,10 @@ class Cart(models.Model):
 
     id = models.AutoField(primary_key=True)
     product = models.OneToOneField(Product, on_delete=models.CASCADE, db_index=True, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     size = models.CharField(max_length=2, choices=SIZES)
     quantity = models.IntegerField(default=0, null=False)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now=True)
 
 class CartForm(forms.ModelForm):
     class Meta:

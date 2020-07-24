@@ -54,7 +54,15 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('size', 'quantity')
+    list_display = ('product_name', 'added_by', 'added_at', 'size', 'quantity')
 
+    def added_by(self, obj):
+        return obj.customer.user.get_full_name() 
 
+    def product_name(self, obj):
+        return obj.product.short_name
 
+    def added_at(self, obj):
+        return obj.created_at
+
+ 
