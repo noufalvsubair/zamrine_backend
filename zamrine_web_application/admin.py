@@ -1,16 +1,9 @@
 from django.contrib import admin
-from django.contrib.admin import AdminSite
 from .model.product import Product, ProductImages, ProductSizes
 from .model.review import Reviews
 from .model.customer import Customer
 from .model.cart import Cart
 from .model.address import Address
-
-class ZamrineAdminSite(AdminSite):
-    site_header = "Zamrine Administration"
-    site_title = "Zamrine Administration"
-
-admin_site = ZamrineAdminSite()
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

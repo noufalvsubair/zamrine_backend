@@ -21,6 +21,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
+        response = {}
         userForm = UserForm(json.loads(request.body))
         customerForm = CustomerForm(json.loads(request.body))
         if customerForm.is_valid() and userForm.is_valid():
@@ -32,11 +33,15 @@ def register(request):
             serializer = UserSerializer(user)
             response = JsonResponse(serializer.data, safe=False)
             response.status_code = 200
-            return response
         else:
             response = JsonResponse(data={'status': 'error', 'message':'user has already registered'})
             response.status_code = 409
-            return response
+    else:
+        response = JsonResponse(data={'status': 'error', 'message':'Invalid request method.'})
+        response.status_code = 404
+        
+    return response
+
 
 @csrf_exempt
 def login(request):
@@ -60,4 +65,9 @@ def login(request):
             response = JsonResponse(data={'status': 'error', 'message':'Please enter valid username & password'})
             response.status_code = 409
             return response
+    else:
+        response = JsonResponse(data={'status': 'error', 'message':'Invalid request method.'})
+        response.status_code = 404
+        
+    return response
             

@@ -119,8 +119,11 @@ def updateCart(request):
             response = JsonResponse(data={'status': 'fail', 
                     'message':'Cart ID & Quantity was mandatory'})
             response.status_code = 403
+    else:
+        response = JsonResponse(data={'status': 'error', 'message':'Invalid request method.'})
+        response.status_code = 404
 
-        return response
+    return response
 
 @csrf_exempt
 def removeCart(request):
@@ -143,4 +146,8 @@ def removeCart(request):
                     'message':'Cart ID was mandatory'})
             response.status_code = 403
     
-        return response
+    else:
+        response = JsonResponse(data={'status': 'error', 'message':'Invalid request method.'})
+        response.status_code = 404
+
+    return response

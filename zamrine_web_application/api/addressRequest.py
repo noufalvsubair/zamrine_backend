@@ -42,8 +42,7 @@ def address(request):
 
     if request.method == 'GET':
         response = {}
-        requestBody = json.loads(request.body)
-        userID = requestBody.get('id')
+        userID = request.GET.get('id')
         if userID is not None:
             customer = Customer.objects.filter(id = userID).first()
             if customer is not None:
@@ -84,8 +83,11 @@ def updateAddress(request):
             response = JsonResponse(data={'status': 'error', 
                 'message':'Address ID was mandatory.'})
             response.status_code = 404
-        
-        return response
+    else:
+        response = JsonResponse(data={'status': 'error', 'message':'Invalid request method.'})
+        response.status_code = 404
+
+    return response
 
 @csrf_exempt
 def removeAddress(request):
@@ -107,7 +109,9 @@ def removeAddress(request):
             response = JsonResponse(data={'status': 'error', 
                 'message':'Address ID was mandatory.'})
             response.status_code = 404
-        
-        return response
+    else:
+        response = JsonResponse(data={'status': 'error', 'message':'Invalid request method.'})
+        response.status_code = 404
 
+    return response
 
