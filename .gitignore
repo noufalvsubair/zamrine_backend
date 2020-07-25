@@ -1,3 +1,3 @@
-zamrine_web_application/migrations
+zamrine_web_application/migrations/*
 *.pyc
 *.DS_Store
