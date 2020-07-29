@@ -4,6 +4,12 @@ from .model.review import Reviews
 from .model.customer import Customer
 from .model.cart import Cart
 from .model.address import Address
+from django.contrib.auth.models import Group, User
+from rest_framework.authtoken.models import Token
+
+admin.site.unregister(Group)
+admin.site.unregister(User)
+admin.site.unregister(Token)
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

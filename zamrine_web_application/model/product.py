@@ -12,6 +12,9 @@ class Product(models.Model):
     product_type = models.CharField(max_length=10, null=False, default="shop")
     action = "Edit"
 
+    def __str__(self):
+        return self.short_name
+
 class ProductImages(models.Model):
     product = models.ForeignKey(Product, related_name="images", on_delete=models.CASCADE, null=True)
     image_url = models.URLField(null=True)
@@ -19,6 +22,9 @@ class ProductImages(models.Model):
 
     def __str__(self):
         return self.image_url
+
+    def __unicode__(self):
+        return self.product.short_name
 
 class ProductSizes(models.Model):
     SIZES = (
