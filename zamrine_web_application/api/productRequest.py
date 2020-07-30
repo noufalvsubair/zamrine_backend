@@ -1,6 +1,6 @@
 from django.http import JsonResponse
-from ..model.product import Product
-from .reviewRequest import ReviewSerializer
+from ..model.product import Product, ProductImages
+from .reviewRequest import ReviewSerializer, Reviews
 from rest_framework import serializers
 import math
 
@@ -18,15 +18,16 @@ class ProductListSerializer(serializers.ModelSerializer):
             offer = math.floor((obj.previous_price - obj.current_price) /100)
         
         return int(offer)
+        
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductDetailsSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
     sizes = serializers.StringRelatedField(many=True)
     offer = serializers.SerializerMethodField()
     
     class Meta:
         model = Product
-        fields = ['id', 'category', 'current_price', 'description', 'long_name', 'short_name' 
+        fields = ['id', 'category', 'current_price', 'description', 'long_name', 'short_name',
         'previous_price', 'soldBy', 'product_type', 'images', 'sizes', 'offer']
 
     def get_offer(self, obj):
@@ -45,29 +46,50 @@ def products(request):
 
         return JsonResponse(serializer.data, safe=False)
 
-def relatedProducts(request):
-    if request.method == 'GET':
-        response = {}
-        productID = request.GET.get('id')
-        if productID is not None:
-            product = Product.objects.filter(id = productID).first()
-            if product is not None:
-                relatedProducts = Product.objects.get(Q(product_type = product.product_type)
-                    | Q(category = product.category) | Q(soldBy = product.soldBy) & Q(id != product.id))
-                serializers = ProductSerializer(relatedProducts, many=True)
-                response = JsonResponse(serializers.data, safe=False)
-                response.status_code = 200
-            else:
-                response = JsonResponse(data = {'status': 'fail', 
-                    'message': 'Product does not exist'})
-                response.status_code = 404
+def calculateOverAllRating(reviews):
+    rating = 0
+    for review in reviews:
+        rating = rating + review.rating
 
-        else:
+    return rating / len(reviews)
+
+def calculateRatingCount(reviews):
+    ratingCount = 0
+    for review in reviews:
+        ratingCount = ratingCount + review.rating
+    
+    return int(math.floor(ratingCount))
+
+def productDetails(request, product_id):
+    if request.method == 'GET':
+        if product_id is not None:
+            product = Product.objects.filter(id = product_id).first()
+            if product is not None:
+                reviews = Reviews.objects.filter(product = product)
+                relatedProducts = Product.objects.filter(product_type = product.product_type 
+                    or soldBy == product.soldBy).exclude(id = product.id)[:4]
+
+                serializers = ProductDetailsSerializer(product)
+                relatedProductSerializer = ProductListSerializer(relatedProducts, many=True)
+                reviewSerializer = ReviewSerializer(reviews.first())
+
+                response = serializers.data
+                response['review'] = reviewSerializer.data
+                response['rating'] = calculateOverAllRating(reviews = reviews)
+                response['rating_count'] = calculateRatingCount(reviews = reviews)
+                response['related_product'] = relatedProductSerializer.data
+
+                response = JsonResponse(response, safe=False)
+            else:
+                response = JsonResponse(data={'status': 'fail', 
+                    'message':'Product does not exist'})
+                response.status_code = 404
+        else: 
             response = JsonResponse(data={'status': 'fail', 
                     'message':'Product ID was mandatory'})
             response.status_code = 403
 
-        return response
+    return response
 
     
 

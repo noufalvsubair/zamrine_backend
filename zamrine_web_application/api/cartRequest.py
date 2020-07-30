@@ -5,7 +5,6 @@ from ..model.customer import Customer
 import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
-from .productRequest import ProductSerializer
 import math
 
 class CartProductSerializer(serializers.ModelSerializer):
@@ -101,7 +100,7 @@ def cart(request):
             else:
                 response = JsonResponse(data={'status': 'fail', 
                     'message':'Customer does not exist'})
-                response.status_code = 403   
+                response.status_code = 404
         else:
             response = JsonResponse(data={'status': 'fail', 
                     'message':'User ID was mandatory'})
