@@ -69,5 +69,6 @@ class CartAdmin(admin.ModelAdmin):
 class AddressAdmin(admin.ModelAdmin):
     list_display = ('name', 'mobile', 'house_name', 'street_name', 'landmark',
         'city', 'pincode', 'state', 'country',)
+    list_filter = ('name',)
 
  

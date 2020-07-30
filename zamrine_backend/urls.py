@@ -3,6 +3,7 @@ from django.contrib import admin
 
 admin.site.site_header = 'Zamrine Admin Panel'
 admin.site.site_title = 'Zamrine Admin'
+admin.site.index_title = '' 
 
 urlpatterns = [
     url(r'', admin.site.urls),
