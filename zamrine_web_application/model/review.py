@@ -3,7 +3,7 @@ from .product import Product
 from django import forms
 
 class Reviews(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(Product, related_name="reviews", on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=20, null=True)
     image_url = models.URLField(null=True)

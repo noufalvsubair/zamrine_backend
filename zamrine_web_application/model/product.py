@@ -23,9 +23,6 @@ class ProductImages(models.Model):
     def __str__(self):
         return self.image_url
 
-    def __unicode__(self):
-        return self.product.short_name
-
 class ProductSizes(models.Model):
     SIZES = (
         ('S', 'Small'),

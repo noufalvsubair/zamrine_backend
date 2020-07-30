@@ -4,6 +4,7 @@ from .model.review import Reviews
 from .model.customer import Customer
 from .model.cart import Cart
 from .model.address import Address
+from .model.order import Order
 from django.contrib.auth.models import Group, User
 from rest_framework.authtoken.models import Token
 
@@ -70,5 +71,16 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ('name', 'mobile', 'house_name', 'street_name', 'landmark',
         'city', 'pincode', 'state', 'country',)
     list_filter = ('name',)
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('product_name', 'price', 'payment_method', 'product_size', 'quantity', 'ordered_by')
+
+    def ordered_by(self, obj):
+        return obj.customer.user.get_full_name() 
+
+    def product_name(self, obj):
+        return obj.product.short_name
+
 
  

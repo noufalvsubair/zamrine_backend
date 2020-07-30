@@ -1,15 +1,17 @@
 from django.http import JsonResponse
 from ..model.product import Product
 from rest_framework import serializers
+from .reviewRequest import ReviewSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
     sizes = serializers.StringRelatedField(many=True)
+    reviews = ReviewSerializer(many=True)
     
     class Meta:
         model = Product
         fields = ['id', 'category', 'current_price', 'description', 'long_name', 
-        'previous_price', 'soldBy', 'product_type', 'images', 'sizes']
+        'previous_price', 'soldBy', 'product_type', 'images', 'sizes', 'reviews']
 
 def products(request):
     if request.method == 'GET':
