@@ -6,14 +6,32 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 from .productRequest import ProductSerializer
+import math
+
+class CartProductSerializer(serializers.ModelSerializer):
+    images = serializers.StringRelatedField(many=True)
+    offer = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ['id', 'category', 'long_name' ,'current_price', 'previous_price', 
+            'offer', 'images']
+    
+    def get_offer(self, obj):
+        offer = 0
+        if (obj.previous_price > 0):
+            offer = math.floor((obj.previous_price - obj.current_price) /100)
+        
+        return int(offer)
 
 class CartSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only = True)
+    product = CartProductSerializer(read_only = True)
 
     class Meta:
         model = Cart
         fields = ['id', 'size', 'quantity', 'product']
 
+# API Request
 def calculateOverAllPrice(cartItems):
     overAllCost = 0
     for cart in cartItems:
@@ -78,7 +96,7 @@ def cart(request):
                 response['total_price'] = calculateOverAllPrice(cartItems = cartItems)
                 response['total_discount'] = calculateOverAllDiscount(cartItems = cartItems)
                 response['delivery_charge'] = 0
-                response['cart_items'] = serializers.data
+                response['items'] = serializers.data
                 response = JsonResponse(response, safe=False)
             else:
                 response = JsonResponse(data={'status': 'fail', 

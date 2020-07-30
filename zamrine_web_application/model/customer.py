@@ -11,6 +11,9 @@ class Customer(models.Model):
     mobile = models.CharField(blank=False, max_length=15)
     image_url = models.URLField(null=True)
 
+    def __str__(self):
+        return self.user.get_full_name()
+
 class UserForm(UserCreationForm):
     password1 = forms.CharField(label= 'password', widget=forms.PasswordInput)
     password2 = forms.CharField(label= 'confirm_password', widget=forms.PasswordInput)

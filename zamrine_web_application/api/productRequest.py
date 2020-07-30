@@ -1,23 +1,47 @@
 from django.http import JsonResponse
 from ..model.product import Product
-from rest_framework import serializers
 from .reviewRequest import ReviewSerializer
+from rest_framework import serializers
+import math
+
+class ProductListSerializer(serializers.ModelSerializer):
+    images = serializers.StringRelatedField(many=True)
+    offer = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Product
+        fields = ['id', 'category', 'short_name' ,'current_price', 'previous_price', 'offer', 'images']
+
+    def get_offer(self, obj):
+        offer = 0
+        if (obj.previous_price > 0):
+            offer = math.floor((obj.previous_price - obj.current_price) /100)
+        
+        return int(offer)
 
 class ProductSerializer(serializers.ModelSerializer):
     images = serializers.StringRelatedField(many=True)
     sizes = serializers.StringRelatedField(many=True)
-    reviews = ReviewSerializer(many=True)
+    offer = serializers.SerializerMethodField()
     
     class Meta:
         model = Product
-        fields = ['id', 'category', 'current_price', 'description', 'long_name', 
-        'previous_price', 'soldBy', 'product_type', 'images', 'sizes', 'reviews']
+        fields = ['id', 'category', 'current_price', 'description', 'long_name', 'short_name' 
+        'previous_price', 'soldBy', 'product_type', 'images', 'sizes', 'offer']
+
+    def get_offer(self, obj):
+        offer = 0
+        if (obj.previous_price > 0):
+            offer = math.floor((obj.previous_price - obj.current_price) /100)
+        
+        return int(offer)
+
 
 def products(request):
     if request.method == 'GET':
         productType = request.GET.get('type')
         products = Product.objects.filter(product_type= productType)
-        serializer = ProductSerializer(products, many=True)
+        serializer = ProductListSerializer(products, many=True)
 
         return JsonResponse(serializer.data, safe=False)
 
