@@ -28,7 +28,7 @@ class ProductDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'category', 'current_price', 'description', 'long_name', 'short_name',
-        'previous_price', 'soldBy', 'product_type', 'images', 'sizes', 'offer']
+            'previous_price', 'soldBy', 'product_type', 'images', 'sizes', 'offer']
 
     def get_offer(self, obj):
         offer = 0
@@ -89,8 +89,6 @@ def productDetails(request, product_id):
                     'message':'Product ID was mandatory'})
             response.status_code = 403
 
-    return response
-
-    
+    return response   
 
 

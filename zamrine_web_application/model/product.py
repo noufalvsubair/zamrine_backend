@@ -1,6 +1,11 @@
 from django.db import models
 
 class Product(models.Model):
+    PRODUCT_TYPES =(
+        ('shop', 'Shop'),
+        ('sale', 'Sale'),
+    )
+
     id = models.AutoField(primary_key=True)
     category = models.CharField(max_length= 20, null=False, default="")
     current_price = models.IntegerField(default=0)
@@ -9,7 +14,7 @@ class Product(models.Model):
     long_name = models.CharField(max_length=50, null=False, default= "")
     previous_price = models.IntegerField(default=0)
     soldBy = models.CharField(max_length=50, null=False, default="Zamrine")
-    product_type = models.CharField(max_length=10, null=False, default="shop")
+    product_type = models.CharField(max_length=4, choices=PRODUCT_TYPES)
     action = "Edit"
 
     def __str__(self):
