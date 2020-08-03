@@ -73,9 +73,9 @@ def cart(request):
                     'message':'Product is added to cart'})
                 response.status_code = 201
             else:
-             response = JsonResponse(data={'status': 'fail', 
+                response = JsonResponse(data={'status': 'fail', 
                     'message':'Product does not exist'})
-            response.status_code = 403   
+                response.status_code = 404
 
         else:
             response = JsonResponse(data={'status': 'fail', 

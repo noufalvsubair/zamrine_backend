@@ -5,6 +5,7 @@ from .api.reviewRequest import reviews
 from .api.userRequest import register, login
 from .api.cartRequest import cart, updateCart, removeCart
 from .api.addressRequest import address, updateAddress, removeAddress
+from .api.orderRequest import order
 
 urlpatterns = [
     url(r'^user/register.json', register),
@@ -18,4 +19,5 @@ urlpatterns = [
     url(r'^user/address.json', address),
     url(r'^user/update_address.json', updateAddress),
     url(r'^user/remove_address.json', removeAddress),
+    url(r'^user/order.json', order),
 ]

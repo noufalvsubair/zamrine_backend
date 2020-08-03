@@ -4,7 +4,7 @@ from .model.review import Reviews
 from .model.customer import Customer
 from .model.cart import Cart
 from .model.address import Address
-from .model.order import Order
+from .model.order import Order, OrderStatus
 from django.contrib.auth.models import Group, User
 from rest_framework.authtoken.models import Token
 
@@ -81,6 +81,16 @@ class OrderAdmin(admin.ModelAdmin):
 
     def product_name(self, obj):
         return obj.product.short_name
+
+@admin.register(OrderStatus)
+class OrderStatusAdmin(admin.ModelAdmin):
+    list_display = ('product_name', 'status', 'ordered_by', 'created_at')
+
+    def ordered_by(self, obj):
+        return obj.order.customer.user.get_full_name() 
+
+    def product_name(self, obj):
+        return obj.order.product.short_name
 
 
  
