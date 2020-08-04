@@ -7,6 +7,27 @@ from rest_framework import serializers
 from django.views.decorators.csrf import csrf_exempt
 import time
 import json
+from rest_framework import serializers
+
+class OrderProductSerializer(serializers.ModelSerializer):
+    images = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'long_name', 'soldBy', 'images']
+
+class OrderStatusSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = OrderStatus
+        fields = ['status', 'created_at']
+
+class OrderListSerializer(serializers.ModelSerializer):
+    product = OrderProductSerializer(read_only = True)
+    status = OrderStatusSerializer(read_only = True, many=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'price', 'product', 'status']
 
 @csrf_exempt
 def order(request):
@@ -44,6 +65,25 @@ def order(request):
         else:
             response = JsonResponse(data={'status': 'fail', 
                     'message':'Product ID, User ID & address ID was mandatory'})
+            response.status_code = 403
+        
+        return response
+    
+    if request.method == 'GET':
+        userID = request.GET.get('id')
+        if userID is not None:
+            customer = Customer.objects.filter(id = userID).first()
+            if customer is not None:
+                orders = Order.objects.filter(customer = customer)
+                serializer = OrderListSerializer(orders, many=True)
+                response = JsonResponse(serializer.data, safe=False)
+            else:
+                response = JsonResponse(data={'status': 'fail', 
+                    'message':'Customer does not exist'})
+                response.status_code = 404
+        else:
+            response = JsonResponse(data={'status': 'fail', 
+                    'message':'User ID was mandatory'})
             response.status_code = 403
         
         return response

@@ -28,6 +28,7 @@ class OrderStatus(models.Model):
         ('packed', 'Packed'),
         ('shipped', 'Shipped'),
         ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled')
     )
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="status", null=True)
