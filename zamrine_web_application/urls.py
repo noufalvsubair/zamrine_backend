@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from .api.productRequest import products, productDetails
 from .api.reviewRequest import reviews
-from .api.userRequest import register, login
+from .api.userRequest import register, login, otp
 from .api.cartRequest import cart, updateCart, removeCart
 from .api.addressRequest import address, updateAddress, removeAddress
 from .api.orderRequest import order
@@ -10,6 +10,7 @@ from .api.orderRequest import order
 urlpatterns = [
     url(r'^user/register.json', register),
     url(r'^user/login.json', login),
+    url(r'^user/otp.json', otp),
     url(r'^product.json', products),
     url(r'^product/(?P<product_id>\w{0,50}).json/$', productDetails),
     url(r'^product/reviews.json', reviews),

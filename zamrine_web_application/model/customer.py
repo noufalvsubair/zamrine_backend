@@ -10,6 +10,10 @@ class Customer(models.Model):
     auth_token = models.TextField(null=False, default="")
     mobile = models.CharField(blank=False, max_length=15)
     image_url = models.URLField(null=True)
+    email_otp = models.IntegerField(blank=False, default=0)
+    mobile_otp = models.IntegerField(blank=False, default=0)
+    is_mobile_verifiied = models.BooleanField(blank=False, default=False)
+    is_email_verified = models.BooleanField(blank=False, default=False)
 
     def __str__(self):
         return self.user.get_full_name()
@@ -29,7 +33,7 @@ class UserForm(UserCreationForm):
     error_messages= {
         "password_mismatch": "Passwords do not match.",
         "username_exists": "Username already present`"
-        }
+    }
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -53,8 +57,21 @@ class UserForm(UserCreationForm):
 
 class CustomerForm(forms.ModelForm):
     mobile = forms.CharField(label='mobile')
-    image_url = forms.CharField(label='image_url')
+    image_url = forms.CharField(label='image_url', required=False)
 
     class Meta:
         model = Customer
         fields = ['mobile', 'image_url']
+
+    error_messages= {
+        "username_exists": "Username already present`"
+    }
+
+    def clean_mobile(self):
+        mobile = self.cleaned_data.get('mobile')
+        if Customer.objects.exclude(pk=self.instance.pk).filter(mobile= mobile).exists():
+            raise forms.ValidationError(
+                self.error_messages['username_exists'],
+                code='username_exists',
+            )
+        return mobile
