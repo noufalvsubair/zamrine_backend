@@ -36,7 +36,7 @@ class ProductSizes(models.Model):
         ('XL', 'ExtraLarge'),
     )
     
-    product = models.ForeignKey(Product, related_name="sizes", null=True)
+    product = models.ForeignKey(Product, related_name="sizes", on_delete=models.CASCADE, null=True)
     size = models.CharField(max_length=2, choices=SIZES)
     action = "Edit"
 

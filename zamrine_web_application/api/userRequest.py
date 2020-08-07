@@ -82,12 +82,12 @@ def otp(request):
         if mobile is not None and email is not None:
             currentUser = User.objects.filter(username=email).first()
             if currentUser is not None:
-                hotp = pyotp.HOTP('base32secret3232')
-                print("Current Email OTP:", pyotp.HOTP(pyotp.random_hex()).now())
-                print("Current Mobile OTP:", pyotp.HOTP(pyotp.random_hex()).now())
+                currentUser.customer.email_otp = pyotp.TOTP(pyotp.random_base32()).now()
+                currentUser.customer.mobile_otp = pyotp.TOTP(pyotp.random_base32()).now()
+                currentUser.save()
 
                 response = JsonResponse(data={'status': 'success', 
-                    'message':"We have sent the OTP"})
+                    'message':"We have sent the OTP. Please check your email & mobile"})
                 response.status_code = 200
             else:
                 response = JsonResponse(data={'status': 'error', 
