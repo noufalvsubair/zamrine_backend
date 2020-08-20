@@ -62,12 +62,31 @@ def cart(request):
         if userID is not None and productID is not None :
             customer = Customer.objects.filter(id = userID).first()
             product = Product.objects.filter(id = productID).first()
+            Cart.objects.all().delete()
             if product is not None and customer is not None:
-                cartForm = CartForm(requestBody)
-                cart = cartForm.save(commit= False)
-                cart.product = product
-                cart.customer = customer
-                cartForm.save()
+                selectedSize = requestBody.get('size')
+                currentCartItem = Cart.objects.filter(product=product).first()
+                if currentCartItem is not None :
+                    if (currentCartItem.quantity < 3):
+                        currentCartItem.quantity += 1
+                        currentCartItem.size = selectedSize
+                        currentCartItem.save(update_fields=['quantity', 'size'])
+                    elif selectedSize != currentCartItem.size:
+                        currentCartItem.quantity = 1
+                        currentCartItem.size = selectedSize
+                        currentCartItem.save(update_fields=['quantity', 'size'])
+                    else:
+                        response = JsonResponse(data={'status': 'fail', 
+                            'message':'Produt Quantity exceed the limit'})
+                        response.status_code = 403
+
+                        return response
+                else:
+                    cartForm = CartForm(requestBody)
+                    cart = cartForm.save(commit= False)
+                    cart.product = product
+                    cart.customer = customer
+                    cartForm.save()
 
                 response = JsonResponse(data={'status': 'success', 
                     'message':'Product is added to cart'})
@@ -118,7 +137,7 @@ def updateCart(request):
         if cartID is not None and quantity is not None:
             cartitem = Cart.objects.filter(id = cartID).first()
             if cartitem is not None:
-                if (cartitem.quantity < 3 and quantity < 3):
+                if (quantity <= 3):
                     cartitem.quantity = quantity
                     cartitem.save(update_fields=['quantity'])
                     response = JsonResponse(data={'status': 'success', 
@@ -143,12 +162,11 @@ def updateCart(request):
     return response
 
 @csrf_exempt
-def removeCart(request):
+def removeCart(request, cart_id):
     if request.method == 'POST':
         response = {}
-        cartID = request.POST.get('id')
-        if cartID is not None:
-            cartItem = Cart.objects.filter(id = cartID).first()
+        if cart_id is not None:
+            cartItem = Cart.objects.filter(id = cart_id).first()
             if cartItem is not None:
                 cartItem.delete()
                 response = JsonResponse(data={'status': 'success', 

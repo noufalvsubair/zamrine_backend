@@ -35,7 +35,7 @@ def register(request):
             customerForm.save()
         
             response = JsonResponse(data={'status': 'success', 'message':'user has registered'})
-            response.status_code = 200
+            response.status_code = 201
         else:
             response = JsonResponse(data={'status': 'error', 'message':'user has already registered'})
             response.status_code = 409
