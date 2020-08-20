@@ -19,6 +19,6 @@ urlpatterns = [
     url(r'^product/(?P<cart_id>\w{0,50})/remove_cart.json', removeCart),
     url(r'^user/address.json', address),
     url(r'^user/update_address.json', updateAddress),
-    url(r'^user/remove_address.json', removeAddress),
+    url(r'^user/(?P<addressID>\w{0,50})/remove_address.json', removeAddress),
     url(r'^user/order.json', order),
 ]

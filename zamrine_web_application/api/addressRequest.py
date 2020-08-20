@@ -90,10 +90,9 @@ def updateAddress(request):
     return response
 
 @csrf_exempt
-def removeAddress(request):
+def removeAddress(request, addressID):
     if request.method == 'POST':
         response = {}
-        addressID = request.POST.get('id')
         if addressID is not None:
             address = Address.objects.filter(id = addressID).first()
             if address is not None:
