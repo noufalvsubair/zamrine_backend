@@ -5,10 +5,15 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
-class ReviewSerializer(serializers.HyperlinkedModelSerializer):
+class ReviewSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Reviews
         fields = ['id', 'created_at', 'title', 'image_url', 'message', 'name', 'rating']
+    
+    def get_rating(self, obj):
+        return float(obj.rating)
 
 @csrf_exempt
 def reviews(request):

@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from ..model.customer import UserForm, CustomerForm
+from ..model.customer import UserForm, CustomerForm, Customer
 from django.views.decorators.csrf import csrf_exempt
 import json
 from rest_framework.authtoken.models import Token
@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth.models import User
 import pyotp
+from django.core.mail import send_mail
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     mobile = serializers.CharField(source='customer.mobile')
@@ -81,12 +82,19 @@ def otp(request):
         response = {}
         if mobile is not None and email is not None:
             currentUser = User.objects.filter(username=email).first()
-            if currentUser is not None:
-                currentUser.customer.email_otp = pyotp.TOTP(pyotp.random_base32()).now()
-                currentUser.customer.mobile_otp = pyotp.TOTP(pyotp.random_base32()).now()
-                currentUser.save()
+            currentCustomer = Customer.objects.filter(mobile= mobile).first()
+            if currentUser is not None and currentCustomer is not None:
+                currentCustomer.email_otp = pyotp.TOTP(pyotp.random_base32()).now()
+                currentCustomer.mobile_otp = pyotp.TOTP(pyotp.random_base32()).now()
+                currentCustomer.save(update_fields=['email_otp', 'mobile_otp'])
 
-                response = JsonResponse(data={'status': 'success', 
+                # html_content = '<p>To activate your zamrine account, Please verify your email address.<br> Your acccount will not be created until your email address id confirmed <br> OTP: <strong>'+ currentCustomer.email_otp +'</strong>>'
+                # send_mail(subject='Verify your email', 
+                #     from_email='no-reply@zamrine.com', 
+                #     recipient_list=[email], message='', html_message=html_content, fail_silently=False)
+
+                response = JsonResponse(data={'status': 'success', 'mobile_otp': currentUser.customer.mobile_otp, 
+                    'email_otp': currentUser.customer.email_otp,
                     'message':"We have sent the OTP. Please check your email & mobile"})
                 response.status_code = 200
             else:
@@ -94,6 +102,37 @@ def otp(request):
                     'message':"User account does't exist"})
                 response.status_code = 404
         else:
+            response = JsonResponse(data={'status': 'error', 
+                'message':'Please enter valid mobile & email'})
+            response.status_code = 409
+        
+        return response
+    
+    if request.method == 'POST':
+        requestBody = json.loads(request.body)
+        response = {}
+        email = requestBody.get('email')
+        mobile = requestBody.get('mobile')
+        emailOTP = requestBody.get('email_otp')
+        mobileOTP = requestBody.get('mobile_otp')
+        if mobile is not None and email is not None :
+            currentUser = User.objects.filter(username= email).first()
+            currentCustomer = Customer.objects.filter(mobile=mobile).filter(email_otp=emailOTP).filter(mobile_otp=mobileOTP).first()
+            print(currentUser)
+            if currentUser is not None and currentCustomer is not None:
+                currentCustomer.is_mobile_verifiied = True
+                currentCustomer.is_email_verified = True
+                currentCustomer.save(update_fields=['is_mobile_verifiied', 'is_email_verified'])
+
+                serializer = UserSerializer(currentUser)
+                response = JsonResponse(serializer.data, safe=False)
+                response.status_code = 200
+
+            else:
+                response = JsonResponse(data={'status': 'error', 
+                    'message':"Could you please check the data"})
+                response.status_code = 404
+        else :
             response = JsonResponse(data={'status': 'error', 
                 'message':'Please enter valid mobile & email'})
             response.status_code = 409

@@ -51,7 +51,7 @@ def calculateOverAllRating(reviews):
     for review in reviews:
         rating = rating + review.rating
 
-    return rating / len(reviews)
+    return  rating / len(reviews) if (rating > 0) else 0
 
 def calculateRatingCount(reviews):
     ratingCount = 0
@@ -74,9 +74,9 @@ def productDetails(request, product_id):
                 reviewSerializer = ReviewSerializer(reviews.first())
 
                 response = serializers.data
-                response['review'] = reviewSerializer.data
-                response['rating'] = calculateOverAllRating(reviews = reviews)
-                response['rating_count'] = calculateRatingCount(reviews = reviews)
+                response['review'] = reviewSerializer.data if (len(reviews) > 0) else None
+                response['rating'] = float(calculateOverAllRating(reviews = reviews))
+                response['rating_count'] = int(calculateRatingCount(reviews = reviews))
                 response['related_product'] = relatedProductSerializer.data
 
                 response = JsonResponse(response, safe=False)

@@ -26,7 +26,7 @@ SECRET_KEY = 'pbl1d8-)79gq+6-6$n-xvzzrs9lmurmyr+-+wit7p!^*$4@$ru'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '192.168.1.4', 'localhost', '127.0.0.1'
+    '192.168.1.5', 'localhost', '127.0.0.1'
 ]
 
 
@@ -89,6 +89,15 @@ DATABASES = {
         'PORT': '5433',
     }
 }
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'zamrineofficial20@gmail.com'
 
 
 # Password validation
