@@ -18,7 +18,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 @csrf_exempt
 def reviews(request):
     if request.method == 'GET':
-        productID = request.GET.get('product_id')
+        productID = request.GET.get('id')
         if productID is None :
             response = JsonResponse(data={'status': 'error', 'message':'Product ID was mandatory.'})
             response.status_code = 404

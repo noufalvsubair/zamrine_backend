@@ -87,3 +87,29 @@ def order(request):
             response.status_code = 403
         
         return response
+
+@csrf_exempt
+def hasPurchased(request):
+    if request.method == 'POST':
+        requestBody = json.loads(request.body)
+        productID = requestBody.get('id')
+        userID = requestBody.get('user_id')
+        if userID is not None and productID is not None:
+            currentUser = Customer.objects.filter(id=userID).first()
+            product = Product.objects.filter(id=productID).first()
+            if currentUser is not None and product is not None:
+                userOder = Order.objects.filter(product=product).filter(customer=currentUser).first()
+                purchased = userOder is not None
+                response = JsonResponse(data={'status': 'success', 
+                    'has_purchased': purchased})
+                response.status_code = 200
+            else:
+                response = JsonResponse(data={'status': 'fail', 
+                    'message':'Customer or Product does not exist'})
+                response.status_code = 404 
+        else:
+            response = JsonResponse(data={'status': 'fail', 
+                    'message':'Product ID & User ID  was mandatory'})
+            response.status_code = 403
+
+        return response

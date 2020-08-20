@@ -5,7 +5,7 @@ from .api.reviewRequest import reviews
 from .api.userRequest import register, login, otp
 from .api.cartRequest import cart, updateCart, removeCart
 from .api.addressRequest import address, updateAddress, removeAddress
-from .api.orderRequest import order
+from .api.orderRequest import order, hasPurchased
 
 urlpatterns = [
     url(r'^user/register.json', register),
@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^user/update_address.json', updateAddress),
     url(r'^user/(?P<addressID>\w{0,50})/remove_address.json', removeAddress),
     url(r'^user/order.json', order),
+    url(r'^user/order/purchased.json', hasPurchased),
 ]
